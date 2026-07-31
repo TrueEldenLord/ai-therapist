@@ -93,12 +93,27 @@ def _compute_engagement(eye_contact: str, head_position: str) -> str:
     return "moderate"
 
 
+def reset_emotion_history() -> None:
+    """Clear the rolling emotion history. Call in test teardown to prevent state bleed."""
+    _emotion_history.clear()
+
+
 def analyze_frame(image_base64: str) -> dict:
     """Analyze a base64-encoded JPEG frame and return emotional context."""
-    img_bgr = _decode_image(image_base64)
-    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-
     try:
+        img_bgr = _decode_image(image_base64)
+        if img_bgr is None:
+            _emotion_history.clear()
+            return {
+                "face_detected": False,
+                "dominant_emotion": "neutral",
+                "emotion_intensity": 0.0,
+                "eye_contact": "low",
+                "head_position": "forward",
+                "engagement_level": "moderate",
+            }
+        img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+
         results = DeepFace.analyze(
             img_path=img_bgr,
             actions=["emotion"],
@@ -125,6 +140,7 @@ def analyze_frame(image_base64: str) -> dict:
         }
 
     except Exception:
+        _emotion_history.clear()
         return {
             "face_detected": False,
             "dominant_emotion": "neutral",

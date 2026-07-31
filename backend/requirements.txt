@@ -4,6 +4,8 @@ python-multipart==0.0.9
 deepface==0.0.93
 opencv-python-headless==4.10.0.84
 mediapipe==0.10.14
+# mediapipe 0.10.14 requires protobuf<5 but tf-keras pulls protobuf 6.x; tests pass but pin may need updating
+tf-keras==2.20.1
 google-generativeai==0.7.2
 gTTS==2.5.1
 python-dotenv==1.0.1
