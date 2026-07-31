@@ -2,7 +2,7 @@ import os
 import base64
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -35,35 +35,23 @@ CRISIS_TEXT = (
     "You can also text HOME to 741741 to reach the Crisis Text Line. "
     "You are not alone in this."
 )
-
-
 class AnalyzeFaceRequest(BaseModel):
     image: str  # base64-encoded JPEG
-
-
 class ChatRequest(BaseModel):
     session_id: str
     message: str
     emotional_context: dict = {}
-
-
 @app.get("/api/health")
 async def health():
     return {"status": "ok"}
-
-
 @app.post("/api/session/new")
 async def new_session():
     session = therapy_engine.create_session()
     return {"session_id": session["session_id"]}
-
-
 @app.post("/api/analyze-face")
 async def analyze_face(req: AnalyzeFaceRequest):
     result = analyze_frame(req.image)
     return result
-
-
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
     if req.session_id not in therapy_engine.sessions:
