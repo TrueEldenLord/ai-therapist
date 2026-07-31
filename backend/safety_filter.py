@@ -15,7 +15,7 @@ CRISIS_PATTERNS = [
 
 WARNING_PATTERNS = [
     r"\bcan'?t\s+go on\b",
-    r"\bcope\b",
+    r"\b(can'?t|don'?t know how to|unable to)\s+cope\b",
     r"\bhopeless\b",
     r"\bno\s+reason\s+to\s+live\b",
     r"\bno\s+point\b",
