@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, Navigate } from 'react-router-dom'
 import Avatar from '../components/Avatar'
 import WebcamFeed from '../components/WebcamFeed'
 import ChatWindow from '../components/ChatWindow'
@@ -69,8 +69,7 @@ export default function Session() {
   }
 
   if (!sessionId) {
-    navigate('/')
-    return null
+    return <Navigate to="/" replace />
   }
 
   return (
@@ -103,7 +102,7 @@ export default function Session() {
         <div className="flex-1 flex flex-col bg-slate-900 rounded-2xl overflow-hidden border border-slate-800">
           <ChatWindow messages={messages} />
           <div className="p-3 border-t border-slate-800">
-            <VoiceInput onSend={handleSend} disabled={sending || crisis} />
+            <VoiceInput onSend={handleSend} disabled={sending} />
           </div>
         </div>
       </div>

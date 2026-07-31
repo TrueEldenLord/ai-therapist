@@ -42,8 +42,11 @@ function AvatarModel({ analyserRef, emotion }) {
     }
 
     // Emotion expression blend shapes
+    // Skip jawOpen when lip-sync is active so it doesn't overwrite the jaw animation
+    const lipSyncActive = !!analyserRef.current
     const expressions = EMOTION_EXPRESSIONS[emotion] || {}
     Object.entries(mesh.morphTargetDictionary).forEach(([name, idx]) => {
+      if (lipSyncActive && name === 'jawOpen') return
       const target = expressions[name] ?? 0
       const current = mesh.morphTargetInfluences[idx]
       // Smooth interpolation toward target
@@ -67,6 +70,8 @@ export default function Avatar({ audioBase64, emotion = 'neutral' }) {
   useEffect(() => {
     if (!audioBase64) return
 
+    let cancelled = false
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
     audioCtxRef.current = audioCtx
 
@@ -79,6 +84,7 @@ export default function Avatar({ audioBase64, emotion = 'neutral' }) {
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
 
     audioCtx.decodeAudioData(bytes.buffer).then((buffer) => {
+      if (cancelled) return
       const source = audioCtx.createBufferSource()
       source.buffer = buffer
       source.connect(analyser)
@@ -87,9 +93,14 @@ export default function Avatar({ audioBase64, emotion = 'neutral' }) {
       source.onended = () => {
         analyserRef.current = null
       }
+    }).catch(() => {
+      // Context may have been closed before decode finished — ignore
     })
 
-    return () => audioCtx.close()
+    return () => {
+      cancelled = true
+      audioCtx.close()
+    }
   }, [audioBase64])
 
   return (

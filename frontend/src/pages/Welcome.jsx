@@ -13,7 +13,7 @@ export default function Welcome() {
     setError(null)
     try {
       const { session_id } = await api.newSession()
-      navigate(`/session?sid=${session_id}`)
+      navigate(`/session?sid=${encodeURIComponent(session_id)}`)
     } catch {
       setError('Could not connect to the server. Make sure the backend is running.')
       setLoading(false)
