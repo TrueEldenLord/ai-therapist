@@ -117,7 +117,7 @@ def analyze_frame(image_base64: str) -> dict:
         results = DeepFace.analyze(
             img_path=img_bgr,
             actions=["emotion"],
-            enforce_detection=True,
+            enforce_detection=False,
             silent=True,
         )
         face_data = results[0]

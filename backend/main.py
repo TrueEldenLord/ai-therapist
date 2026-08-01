@@ -1,17 +1,16 @@
 import os
 import base64
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-
-from pydantic import BaseModel
 from dotenv import load_dotenv
 
+load_dotenv()
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from face_analyzer import analyze_frame
 from safety_filter import analyze_message
 from therapy_engine import TherapyEngine
 from tts import text_to_audio
-
-load_dotenv()
 
 app = FastAPI(title="AI Therapist API")
 
